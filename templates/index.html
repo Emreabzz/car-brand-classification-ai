@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <title>Car Brand Classification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <h1>🚗 Car Brand Classification</h1>
+  <p>EfficientNet-B3 • PyTorch • Flask</p>
+</header>
+
+<main class="container">
+
+  <!-- UPLOAD -->
+  <div class="card">
+    <h2>Resim Yükle</h2>
+
+    <form id="predictForm" enctype="multipart/form-data">
+      <label class="file-box">
+        <input id="imageInput" type="file" name="image" accept="image/*" required>
+        <span>📂 Resim Seç</span>
+      </label>
+
+      <!-- 🆕 FOTOĞRAF ÖNİZLEME -->
+      <img id="previewImg" class="preview" hidden>
+
+      <button type="submit" class="btn">Tahmin Yap</button>
+    </form>
+
+    <div id="loading" class="loading" hidden>⏳ Tahmin yapılıyor...</div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="card">
+    <h2>Sonuçlar</h2>
+    <pre id="predictText" class="result-box">Henüz tahmin yapılmadı.</pre>
+  </div>
+
+</main>
+
+<footer class="footer">
+  Emre Abaz  • Deep Learning Project
+</footer>
+
+<script>
+const form = document.getElementById("predictForm");
+const output = document.getElementById("predictText");
+const loading = document.getElementById("loading");
+const imgInput = document.getElementById("imageInput");
+const preview = document.getElementById("previewImg");
+
+/* 📸 RESİM SEÇİLİNCE GÖSTER */
+imgInput.addEventListener("change", () => {
+  const file = imgInput.files[0];
+  if (!file) return;
+
+  preview.src = URL.createObjectURL(file);
+  preview.hidden = false;
+});
+
+/* 🚀 TAHMİN */
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  loading.hidden = false;
+  output.textContent = "";
+
+  const formData = new FormData(form);
+
+  const res = await fetch("/predict", {
+    method: "POST",
+    body: formData
+  });
+
+  const data = await res.json();
+  loading.hidden = true;
+
+  let text = "🔍 TOP-5 TAHMİN\n\n";
+  data.forEach((item, i) => {
+    text += `${i + 1}. ${item.class} → ${(item.confidence * 100).toFixed(2)}%\n`;
+  });
+
+  output.textContent = text;
+});
+</script>
+
+</body>
+</html>
