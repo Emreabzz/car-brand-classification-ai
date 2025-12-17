@@ -84,6 +84,6 @@ Tarayıcıdan aç:
 
 ## 👤 Geliştirici
 
-**Göktan Yıldız**\
-220706030\
+**Emre Abaz**\
+220706022\
 Derin Öğrenme Projesi
